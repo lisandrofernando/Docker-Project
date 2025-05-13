@@ -58,19 +58,24 @@ jobs:
   sonarqube-scan:
     runs-on: self-hosted
     needs: build
-    steps:   
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5.0.0 # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
-        env:
+    steps:  
+       - name: Install SonarQube Scanner
+         run: |
+              curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.0.2.4839-linux-x64.zip
+              unzip sonar-scanner.zip
+              echo "$(pwd)/sonar-scanner-7.0.2.4839-linux-x64/bin" >> $GITHUB_PATH
+       - name: SonarQube Scan
+         uses: SonarSource/sonarqube-scan-action@v5.0.0 # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+         env:
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
            SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
         
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        with:
-         pollingTimeoutSec: 600
-        env:
+       - name: SonarQube Quality Gate check
+         id: sonarqube-quality-gate-check
+         uses: sonarsource/sonarqube-quality-gate-action@master
+         with:
+          pollingTimeoutSec: 600
+         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
   deploy:
