@@ -89,5 +89,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-               
-        
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6.16.0
+        with:        
+            push: true
+            tags: lisandroaws/docker-project:v1.0.0
+            context: .
